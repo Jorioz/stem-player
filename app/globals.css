@@ -3,11 +3,46 @@
 @tailwind utilities;
 
 :root {
-  background: rgb(232,227,212);
+  background: rgb(232, 227, 212);
+}
+
+html,
+body {
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  /* Customize the appearance of the thumb */
+  -webkit-appearance: none;
+  appearance: none;
+  /* Set the size and color of the thumb */
+  width: 20px; /* Adjust as needed */
+  height: 20px; /* Adjust as needed */
+  background-color: #ffffff; /* Adjust as needed */
+  border-radius: 50%; /* Ensures a circular shape */
+  border: 2px solid #ffffff; /* Adjust as needed */
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  /* Customize the appearance of the thumb for Firefox */
+  width: 20px; /* Adjust as needed */
+  height: 20px; /* Adjust as needed */
+  background-color: #ffffff; /* Adjust as needed */
+  border-radius: 50%; /* Ensures a circular shape */
+  border: 2px solid #ffffff; /* Adjust as needed */
+  cursor: pointer;
 }

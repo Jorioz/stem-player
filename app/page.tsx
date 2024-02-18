@@ -8,8 +8,6 @@ export default function Home() {
   const [drumsVolume, setDrumsVolume] = useState(100);
   const [bassVolume, setBassVolume] = useState(100);
   const [otherVolume, setOtherVolume] = useState(100);
-
-  const [sliderValue, setSliderValue] = useState(100);
   const colors = ["#f7584d", "#f7694d", "#f74d6f", "#462eff"];
 
   const handleVocalsVolumeChange = (
@@ -84,7 +82,6 @@ export default function Home() {
     }
   };
 
-  // Ensure audioElements is accessible
   const [audioElements, setAudioElements] = useState<HTMLAudioElement[]>([]);
 
   return (
@@ -97,12 +94,13 @@ export default function Home() {
             <input
               id="vocal-slider"
               type="range"
-              className="-rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 opacity-0 cursor-pointer"
-              min="0"
+              className="-rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0  opacity-10 cursor-pointer"
+              min="0.01"
               max="100"
-              step="1"
+              step="0.01"
               value={vocalsVolume}
-              onChange={handleVocalsVolumeChange}
+              onInput={handleVocalsVolumeChange}
+              style={{ touchAction: "none" }}
             />
             <div className="w-full h-full rounded-full shadow-stem-inner-top grid grid-rows-4 items-center relative">
               <LightModule
@@ -118,12 +116,13 @@ export default function Home() {
             <input
               id="bass-slider"
               type="range"
-              className="rotate-180 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 opacity-0 cursor-pointer"
-              min="0"
+              className="rotate-180 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
+              min="0.01"
               max="100"
-              step="1"
+              step="0.01"
               value={bassVolume}
-              onChange={handleBassVolumeChange}
+              onInput={handleBassVolumeChange}
+              style={{ touchAction: "none" }}
             />
             <div className="w-full h-full rounded-full shadow-stem-inner-left grid grid-cols-4 items-center">
               <LightModule
@@ -149,12 +148,13 @@ export default function Home() {
             <input
               id="drums-slider"
               type="range"
-              className="absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 opacity-0 cursor-pointer"
-              min="0"
+              className="absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
+              min="0.01"
               max="100"
-              step="1"
+              step="0.01"
               value={drumsVolume}
-              onChange={handleDrumsVolumeChange}
+              onInput={handleDrumsVolumeChange}
+              style={{ touchAction: "none" }}
             />
             <div
               className="w-full h-full rounded-full shadow-stem-inner-right grid grid-cols-4 items-center"
@@ -172,12 +172,13 @@ export default function Home() {
             <input
               id="other-slider"
               type="range"
-              className="rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 opacity-0 cursor-pointer"
-              min="0"
+              className="rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
+              min="0.01"
               max="100"
-              step="1"
+              step="0.01"
               value={otherVolume}
-              onChange={handleOtherVolumeChange}
+              onInput={handleOtherVolumeChange}
+              style={{ touchAction: "none" }}
             />
             <div className="w-full h-full rounded-full shadow-stem-inner-bottom grid grid-rows-4 items-center rotate-180">
               <LightModule

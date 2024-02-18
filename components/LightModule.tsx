@@ -12,26 +12,36 @@ const LightModule: React.FC<LightModuleProps> = ({
   volume,
 }) => {
   const count = 4;
+  const maxOpacity = 1; // Maximum allowed opacity
+
   const modules = [];
   for (let i = 0; i < count; i++) {
     const color = colors[i % colors.length];
     let opacity;
 
-    // Adjust opacity for each element based on volume level
-    if (volume === 0) {
-      opacity = 0; // All at 0% opacity if at 0% volume
-    } else if (volume >= 100) {
-      opacity = 1; // All at 100% opacity if at 100% volume
+    // For element 0, set opacity to 1, regardless of volume
+    if (i === 3) {
+      opacity = 1;
     } else {
-      const volumeStep = 25;
-      const volumeThreshold = (count - i - 1) * volumeStep; // Threshold for current element
-
-      if (volume >= volumeThreshold) {
-        // If volume exceeds or is equal to the threshold for the current element, calculate opacity
-        opacity = Math.min(1, (volume - volumeThreshold) / volumeStep);
+      // Adjust opacity for other elements based on volume level
+      if (volume === 0) {
+        opacity = 0; // All at 0% opacity if at 0% volume
+      } else if (volume >= 100) {
+        opacity = maxOpacity; // Set to maximum opacity if at 100% volume
       } else {
-        // Otherwise, set opacity to 0
-        opacity = 0;
+        const volumeStep = 25;
+        const volumeThreshold = (count - i - 1) * volumeStep; // Threshold for current element
+
+        if (volume >= volumeThreshold) {
+          // If volume exceeds or is equal to the threshold for the current element, calculate opacity
+          opacity = Math.min(
+            maxOpacity,
+            (volume - volumeThreshold) / volumeStep
+          );
+        } else {
+          // Otherwise, set opacity to 0
+          opacity = 0;
+        }
       }
     }
 
