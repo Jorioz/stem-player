@@ -1,88 +1,364 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import LightModule from "../components/LightModule";
-import AudioPlayer from "../components/AudioPlayer";
+const AudioPlayer = dynamic(() => import("../components/AudioPlayer"), {
+  ssr: false,
+});
+import dynamic from "next/dynamic";
 
 export default function Home() {
   const [vocalsVolume, setVocalsVolume] = useState(100);
   const [drumsVolume, setDrumsVolume] = useState(100);
   const [bassVolume, setBassVolume] = useState(100);
   const [otherVolume, setOtherVolume] = useState(100);
+
+  const [vocalsHovered, setVocalsHovered] = useState(false);
+  const [drumsHovered, setDrumsHovered] = useState(false);
+  const [bassHovered, setBassHovered] = useState(false);
+  const [otherHovered, setOtherHovered] = useState(false);
+
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isTouchDown, setIsTouchDown] = useState(false);
+
   const colors = ["#f7584d", "#f7694d", "#f74d6f", "#462eff"];
 
-  const handleVocalsVolumeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newVolume = parseInt(event.target.value);
-    if (newVolume === 0) {
-      setVocalsVolume(newVolume);
-      if (audioElements && audioElements[0]) {
-        audioElements[0].pause();
-        audioElements[0].volume = 1;
-      }
-    } else {
-      setVocalsVolume(newVolume);
-      if (audioElements && audioElements[0]) {
-        audioElements[0].volume = newVolume / 100;
-      }
+  const handleMouseEnter = (id: string) => {
+    switch (id) {
+      case "top":
+        setVocalsHovered(true);
+        //console.log("Vocals Hovered");
+        break;
+      case "right":
+        setDrumsHovered(true);
+        //console.log("Drums Hovered");
+        break;
+      case "left":
+        setBassHovered(true);
+        //console.log("Bass Hovered");
+        break;
+      case "bottom":
+        setOtherHovered(true);
+        //console.log("Other Hovered");
+        break;
+      default:
+        break;
     }
   };
 
-  const handleDrumsVolumeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newVolume = parseInt(event.target.value);
-    if (newVolume === 0) {
-      setDrumsVolume(newVolume);
-      if (audioElements && audioElements[1]) {
-        audioElements[1].pause();
-        audioElements[1].volume = 1;
-      }
-    } else {
-      setDrumsVolume(newVolume);
-      if (audioElements && audioElements[1]) {
-        audioElements[1].volume = newVolume / 100;
-      }
+  const handleMouseLeave = (id: string) => {
+    switch (id) {
+      case "top":
+        setVocalsHovered(false);
+        setIsMouseDown(false);
+        setIsTouchDown(false);
+        //console.log("Vocals Unhovered");
+        break;
+      case "right":
+        setDrumsHovered(false);
+        setIsMouseDown(false);
+        setIsTouchDown(false);
+        //console.log("Drums Unhovered");
+        break;
+      case "left":
+        setBassHovered(false);
+        setIsMouseDown(false);
+        setIsTouchDown(false);
+        //console.log("Bass Unhovered");
+        break;
+      case "bottom":
+        setOtherHovered(false);
+        setIsMouseDown(false);
+        setIsTouchDown(false);
+        //console.log("Other Unhovered");
+        break;
+      default:
+        break;
     }
   };
 
-  const handleBassVolumeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newVolume = parseInt(event.target.value);
-    if (newVolume === 0) {
-      setBassVolume(newVolume);
-      if (audioElements && audioElements[2]) {
-        audioElements[2].pause();
-        audioElements[2].volume = 1;
-      }
-    } else {
-      setBassVolume(newVolume);
-      if (audioElements && audioElements[2]) {
-        audioElements[2].volume = newVolume / 100;
-      }
+  const handleMouseDown = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.MouseEvent) => {
+          if (vocalsHovered && !isMouseDown && event.type === "mousedown") {
+            setIsMouseDown(true);
+            //console.log("Vocals Clicked");
+            return;
+          }
+        };
+      case "right":
+        return (event: React.MouseEvent) => {
+          if (drumsHovered && !isMouseDown && event.type === "mousedown") {
+            setIsMouseDown(true);
+            //console.log("Drums Clicked");
+            return;
+          }
+        };
+      case "left":
+        return (event: React.MouseEvent) => {
+          if (bassHovered && !isMouseDown && event.type === "mousedown") {
+            setIsMouseDown(true);
+            //console.log("Bass Clicked");
+            return;
+          }
+        };
+      case "bottom":
+        return (event: React.MouseEvent) => {
+          if (otherHovered && !isMouseDown && event.type === "mousedown") {
+            setIsMouseDown(true);
+            //console.log("Other Clicked");
+            return;
+          }
+        };
+      default:
+        break;
     }
   };
 
-  const handleOtherVolumeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newVolume = parseInt(event.target.value);
-    if (newVolume === 0) {
-      setOtherVolume(newVolume);
-      if (audioElements && audioElements[3]) {
-        audioElements[3].pause();
-        audioElements[3].volume = 1;
-      }
-    } else {
-      setOtherVolume(newVolume);
-      if (audioElements && audioElements[3]) {
-        audioElements[3].volume = newVolume / 100;
-      }
+  const handleMouseUp = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.MouseEvent) => {
+          if (vocalsHovered && event.type === "mouseup") {
+            setIsMouseDown(false);
+            //console.log("Vocals UnClicked");
+            return;
+          }
+        };
+      case "right":
+        return (event: React.MouseEvent) => {
+          if (drumsHovered && event.type === "mouseup") {
+            setIsMouseDown(false);
+            //console.log("Drums UnClicked");
+            return;
+          }
+        };
+      case "left":
+        return (event: React.MouseEvent) => {
+          if (bassHovered && event.type === "mouseup") {
+            setIsMouseDown(false);
+            //console.log("Bass UnClicked");
+            return;
+          }
+        };
+      case "bottom":
+        return (event: React.MouseEvent) => {
+          if (otherHovered && event.type === "mouseup") {
+            setIsMouseDown(false);
+            //console.log("Other UnClicked");
+            return;
+          }
+        };
+      default:
+        break;
     }
   };
 
-  const [audioElements, setAudioElements] = useState<HTMLAudioElement[]>([]);
+  const handleMouseDrag = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.MouseEvent) => {
+          if (vocalsHovered && isMouseDown && event.type === "mousemove") {
+            //console.log("Vocals Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetY = (event as React.MouseEvent).clientY - rect.top;
+            const height = rect.height;
+            let newVolume = ((height - offsetY) / height) * 100;
+            newVolume = Math.round(newVolume);
+            //console.log(newVolume);
+            setVocalsVolume(newVolume);
+          }
+        };
+      case "bottom":
+        return (event: React.MouseEvent) => {
+          if (otherHovered && isMouseDown && event.type === "mousemove") {
+            //console.log("Other Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetY = (event as React.MouseEvent).clientY - rect.top;
+            const height = rect.height;
+            let newVolume = ((height - offsetY) / height) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = 100 - newVolume;
+            //console.log(newVolume);
+            setOtherVolume(newVolume);
+          }
+        };
+      case "right":
+        return (event: React.MouseEvent) => {
+          if (drumsHovered && isMouseDown && event.type === "mousemove") {
+            //console.log("Drums Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetX = (event as React.MouseEvent).clientX - rect.left;
+            const width = rect.width;
+            let newVolume = (offsetX / width) * 100;
+            newVolume = Math.round(newVolume);
+            //console.log(newVolume);
+            setDrumsVolume(newVolume);
+          }
+        };
+      case "left":
+        return (event: React.MouseEvent) => {
+          if (bassHovered && isMouseDown && event.type === "mousemove") {
+            //console.log("Bass Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetX = (event as React.MouseEvent).clientX - rect.left;
+            const width = rect.width;
+            let newVolume = (offsetX / width) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = 100 - newVolume;
+            //console.log(newVolume);
+            setBassVolume(newVolume);
+          }
+        };
+      default:
+        break;
+    }
+  };
+
+  // Mobile Touch Cases:
+
+  const handleTouchStart = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.TouchEvent) => {
+          event.preventDefault();
+          if (!isTouchDown && event.type === "touchstart") {
+            setVocalsHovered(true);
+            setIsTouchDown(true);
+            //console.log("Vocals Touched");
+          }
+        };
+      case "right":
+        return (event: React.TouchEvent) => {
+          event.preventDefault();
+          if (!isTouchDown && event.type === "touchstart") {
+            setDrumsHovered(true);
+            setIsTouchDown(true);
+            //console.log("Drums Touched");
+          }
+        };
+      case "left":
+        return (event: React.TouchEvent) => {
+          event.preventDefault();
+          if (!isTouchDown && event.type === "touchstart") {
+            setBassHovered(true);
+            setIsTouchDown(true);
+            //console.log("Bass Touched");
+          }
+        };
+      case "bottom":
+        return (event: React.TouchEvent) => {
+          event.preventDefault();
+          if (!isTouchDown && event.type === "touchstart") {
+            setOtherHovered(true);
+            setIsTouchDown(true);
+            //console.log("Other Touched");
+          }
+        };
+      default:
+        break;
+    }
+  };
+
+  const handleTouchEnd = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.TouchEvent) => {
+          if (event.type === "touchend") {
+            setVocalsHovered(false);
+            setIsTouchDown(false);
+            //console.log("Vocals Untouched");
+          }
+        };
+      case "right":
+        return (event: React.TouchEvent) => {
+          if (event.type === "touchend") {
+            setDrumsHovered(false);
+            setIsTouchDown(false);
+            //console.log("Drums Untouched");
+          }
+        };
+      case "left":
+        return (event: React.TouchEvent) => {
+          if (event.type === "touchend") {
+            setBassHovered(false);
+            setIsTouchDown(false);
+            //console.log("Bass Untouched");
+          }
+        };
+      case "bottom":
+        return (event: React.TouchEvent) => {
+          if (event.type === "touchend") {
+            setOtherHovered(false);
+            setIsTouchDown(false);
+            //console.log("Other Untouched");
+          }
+        };
+      default:
+        break;
+    }
+  };
+
+  const handleTouchMove = (id: string) => {
+    switch (id) {
+      case "top":
+        return (event: React.TouchEvent) => {
+          if (vocalsHovered && isTouchDown) {
+            //console.log("Vocals Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetY = event.touches[0].clientY - rect.top;
+            const height = rect.height;
+            let newVolume = ((height - offsetY) / height) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = Math.max(0, Math.min(newVolume, 100));
+            setVocalsVolume(newVolume);
+          }
+        };
+      case "bottom":
+        return (event: React.TouchEvent) => {
+          if (otherHovered && isTouchDown) {
+            //console.log("Other Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetY = event.touches[0].clientY - rect.top;
+            const height = rect.height;
+            let newVolume = ((height - offsetY) / height) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = Math.max(0, Math.min(newVolume, 100));
+            newVolume = 100 - newVolume;
+            setOtherVolume(newVolume);
+          }
+        };
+      case "right":
+        return (event: React.TouchEvent) => {
+          if (drumsHovered && isTouchDown) {
+            //console.log("Drums Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetX = event.touches[0].clientX - rect.left;
+            const width = rect.width;
+            let newVolume = (offsetX / width) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = Math.max(0, Math.min(newVolume, 100));
+            setDrumsVolume(newVolume);
+          }
+        };
+      case "left":
+        return (event: React.TouchEvent) => {
+          if (bassHovered && isTouchDown) {
+            //console.log("Bass Dragged");
+            const rect = event.currentTarget.getBoundingClientRect();
+            const offsetX = event.touches[0].clientX - rect.left;
+            const width = rect.width;
+            let newVolume = (offsetX / width) * 100;
+            newVolume = Math.round(newVolume);
+            newVolume = Math.max(0, Math.min(newVolume, 100));
+            newVolume = 100 - newVolume;
+            setBassVolume(newVolume);
+          }
+        };
+      default:
+        break;
+    }
+  };
 
   return (
     <main className="flex h-svh flex-col items-center justify-between">
@@ -90,46 +366,41 @@ export default function Home() {
       <div className="md:h-128 md:w-128 sm:h-96 sm:w-96 w-72 h-72 relative">
         <div className="absolute inset-0 grid grid-cols-7 grid-rows-7">
           <div className="col-span-3 row-span-3 bg-transparent"></div>
-          <div className="col-span-1 row-span-3 my-4 relative" id="top">
-            <input
-              id="vocal-slider"
-              type="range"
-              className="-rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0  opacity-10 cursor-pointer"
-              min="0.01"
-              max="100"
-              step="0.01"
-              value={vocalsVolume}
-              onInput={handleVocalsVolumeChange}
-              style={{ touchAction: "none" }}
-            />
-            <div className="w-full h-full rounded-full shadow-stem-inner-top grid grid-rows-4 items-center relative">
-              <LightModule
-                colors={colors}
-                instrument="Vocals"
-                volume={vocalsVolume}
-              />
+          <div
+            className={`col-span-1 row-span-3 my-4 relative `}
+            id="top"
+            onMouseEnter={() => handleMouseEnter("top")}
+            onMouseLeave={() => handleMouseLeave("top")}
+            onMouseDown={handleMouseDown("top")}
+            onMouseUp={handleMouseUp("top")}
+            onMouseMove={handleMouseDrag("top")}
+            onTouchStart={handleTouchStart("top")}
+            onTouchEnd={handleTouchEnd("top")}
+            onTouchMove={handleTouchMove("top")}
+          >
+            <div
+              className={`w-full h-full rounded-full shadow-stem-inner-top grid grid-rows-4 items-center relative 
+              `}
+            >
+              <LightModule colors={colors} volume={vocalsVolume} />
             </div>
           </div>
           <div className="col-span-3 row-span-3 bg-transparent"></div>
 
-          <div className="col-span-3 row-span-1 mx-4 relative" id="left">
-            <input
-              id="bass-slider"
-              type="range"
-              className="rotate-180 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
-              min="0.01"
-              max="100"
-              step="0.01"
-              value={bassVolume}
-              onInput={handleBassVolumeChange}
-              style={{ touchAction: "none" }}
-            />
+          <div
+            className="col-span-3 row-span-1 mx-4 relative"
+            id="left"
+            onMouseEnter={() => handleMouseEnter("left")}
+            onMouseLeave={() => handleMouseLeave("left")}
+            onMouseDown={handleMouseDown("left")}
+            onMouseUp={handleMouseUp("left")}
+            onMouseMove={handleMouseDrag("left")}
+            onTouchStart={handleTouchStart("left")}
+            onTouchEnd={handleTouchEnd("left")}
+            onTouchMove={handleTouchMove("left")}
+          >
             <div className="w-full h-full rounded-full shadow-stem-inner-left grid grid-cols-4 items-center">
-              <LightModule
-                colors={colors}
-                instrument="Bass"
-                volume={bassVolume}
-              />
+              <LightModule colors={colors} volume={bassVolume} />
             </div>
           </div>
           <div className="col-span-1 row-span-1" id="middle">
@@ -144,48 +415,40 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className="col-span-3 row-span-1 mx-4 relative" id="right">
-            <input
-              id="drums-slider"
-              type="range"
-              className="absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
-              min="0.01"
-              max="100"
-              step="0.01"
-              value={drumsVolume}
-              onInput={handleDrumsVolumeChange}
-              style={{ touchAction: "none" }}
-            />
+          <div
+            className="col-span-3 row-span-1 mx-4 relative"
+            id="right"
+            onMouseEnter={() => handleMouseEnter("right")}
+            onMouseLeave={() => handleMouseLeave("right")}
+            onMouseDown={handleMouseDown("right")}
+            onMouseUp={handleMouseUp("right")}
+            onMouseMove={handleMouseDrag("right")}
+            onTouchStart={handleTouchStart("right")}
+            onTouchEnd={handleTouchEnd("right")}
+            onTouchMove={handleTouchMove("right")}
+          >
             <div
               className="w-full h-full rounded-full shadow-stem-inner-right grid grid-cols-4 items-center"
               dir="rtl"
             >
-              <LightModule
-                colors={colors}
-                instrument="Drums"
-                volume={drumsVolume}
-              />
+              <LightModule colors={colors} volume={drumsVolume} />
             </div>
           </div>
           <div className="col-span-3 row-span-3 bg-transparent"></div>
-          <div className="col-span-1 row-span-3 my-4 relative" id="bottom">
-            <input
-              id="other-slider"
-              type="range"
-              className="rotate-90 absolute h-1/2 w-24 sm:w-32 md:w-48 top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 z-10 md:opacity-0 opacity-10 cursor-pointer"
-              min="0.01"
-              max="100"
-              step="0.01"
-              value={otherVolume}
-              onInput={handleOtherVolumeChange}
-              style={{ touchAction: "none" }}
-            />
+          <div
+            className="col-span-1 row-span-3 my-4 relative"
+            id="bottom"
+            onMouseEnter={() => handleMouseEnter("bottom")}
+            onMouseLeave={() => handleMouseLeave("bottom")}
+            onMouseDown={handleMouseDown("bottom")}
+            onMouseUp={handleMouseUp("bottom")}
+            onMouseMove={handleMouseDrag("bottom")}
+            onTouchStart={handleTouchStart("bottom")}
+            onTouchEnd={handleTouchEnd("bottom")}
+            onTouchMove={handleTouchMove("bottom")}
+          >
             <div className="w-full h-full rounded-full shadow-stem-inner-bottom grid grid-rows-4 items-center rotate-180">
-              <LightModule
-                colors={colors}
-                instrument="Other"
-                volume={otherVolume}
-              />
+              <LightModule colors={colors} volume={otherVolume} />
             </div>
           </div>
           <div className="col-span-3 row-span-3 bg-transparent"></div>

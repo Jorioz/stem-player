@@ -2,15 +2,10 @@ import React from "react";
 
 interface LightModuleProps {
   colors: string[];
-  instrument: string;
   volume: number;
 }
 
-const LightModule: React.FC<LightModuleProps> = ({
-  colors,
-  instrument,
-  volume,
-}) => {
+const LightModule: React.FC<LightModuleProps> = ({ colors, volume }) => {
   const count = 4;
   const maxOpacity = 1; // Maximum allowed opacity
 
