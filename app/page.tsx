@@ -367,7 +367,7 @@ export default function Home() {
         <div className="absolute inset-0 grid grid-cols-7 grid-rows-7">
           <div className="col-span-3 row-span-3 bg-transparent"></div>
           <div
-            className={`col-span-1 row-span-3 my-4 relative `}
+            className="col-span-1 row-span-3 my-4 relative cursor-pointer"
             id="top"
             onMouseEnter={() => handleMouseEnter("top")}
             onMouseLeave={() => handleMouseLeave("top")}
@@ -388,7 +388,7 @@ export default function Home() {
           <div className="col-span-3 row-span-3 bg-transparent"></div>
 
           <div
-            className="col-span-3 row-span-1 mx-4 relative"
+            className="col-span-3 row-span-1 mx-4 relative cursor-pointer"
             id="left"
             onMouseEnter={() => handleMouseEnter("left")}
             onMouseLeave={() => handleMouseLeave("left")}
@@ -416,7 +416,7 @@ export default function Home() {
             </div>
           </div>
           <div
-            className="col-span-3 row-span-1 mx-4 relative"
+            className="col-span-3 row-span-1 mx-4 relative cursor-pointer"
             id="right"
             onMouseEnter={() => handleMouseEnter("right")}
             onMouseLeave={() => handleMouseLeave("right")}
@@ -436,7 +436,7 @@ export default function Home() {
           </div>
           <div className="col-span-3 row-span-3 bg-transparent"></div>
           <div
-            className="col-span-1 row-span-3 my-4 relative"
+            className="col-span-1 row-span-3 my-4 relative cursor-pointer"
             id="bottom"
             onMouseEnter={() => handleMouseEnter("bottom")}
             onMouseLeave={() => handleMouseLeave("bottom")}

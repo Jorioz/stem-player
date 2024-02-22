@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { Howl } from "howler";
+//@ts-ignore
+import { unmute } from "/unmute.js";
 
 interface AudioPlayerProps {
   tracks: { src: string; volume: number }[];
@@ -6,86 +9,137 @@ interface AudioPlayerProps {
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioElements, setAudioElements] = useState<HTMLAudioElement[]>([]);
+  const [vocals, setVocals] = useState<Howl | null>(null);
+  const [other, setOther] = useState<Howl | null>(null);
+  const [bass, setBass] = useState<Howl | null>(null);
+  const [drums, setDrums] = useState<Howl | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Unmute WebAudio on iOS. From: https://github.com/swevans/unmute
   useEffect(() => {
+    // Create an audio context instance if WebAudio is supported
+    let context =
+      window.AudioContext || (window as any).webkitAudioContext
+        ? new (window.AudioContext || (window as any).webkitAudioContext)()
+        : null;
+
+    // Decide on some parameters
+    let allowBackgroundPlayback = false; // default false, recommended false
+    let forceIOSBehavior = false; // default false, recommended false
+
+    // Pass it to unmute if the context exists... ie WebAudio is supported
+    let unmuteHandle: { dispose: () => void } | undefined;
+    if (context) {
+      // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
+      // if you don't need to do that (most folks won't) then you can simply ignore the return value
+      unmuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
+    }
+
+    // Return a cleanup function to stop unmute control when the component unmounts
     return () => {
-      audioElements.forEach((audio) => {
-        audio.pause();
-        audio.load();
-      });
+      if (unmuteHandle) {
+        unmuteHandle.dispose();
+        unmuteHandle = undefined;
+      }
     };
   }, []);
 
   useEffect(() => {
-    updateVolume();
+    if (!vocals) {
+      const newVocals = new Howl({
+        src: [tracks[0].src],
+        volume: 1,
+      });
+      setVocals(newVocals);
+      console.log("Vocals Loaded");
+    } else {
+      vocals.volume(tracks[0].volume / 100);
+    }
+
+    if (!other) {
+      const newOther = new Howl({
+        src: [tracks[1].src],
+        volume: 1,
+      });
+      setOther(newOther);
+      console.log("Other Loaded");
+    } else {
+      other.volume(tracks[1].volume / 100);
+    }
+
+    if (!bass) {
+      const newBass = new Howl({
+        src: [tracks[2].src],
+        volume: 1,
+      });
+      setBass(newBass);
+      console.log("Bass Loaded");
+    } else {
+      bass.volume(tracks[2].volume / 100);
+    }
+
+    if (!drums) {
+      const newDrums = new Howl({
+        src: [tracks[3].src],
+        volume: tracks[3].volume / 100,
+      });
+      setDrums(newDrums);
+      console.log("Drums Loaded");
+    } else {
+      drums.volume(tracks[3].volume / 100);
+    }
   }, [tracks]);
 
-  const updateVolume = () => {
-    audioElements.forEach((audio, index) => {
-      audio.volume = tracks[index].volume / 100;
-    });
-  };
-
-  const loadedRef = useRef(0);
-  const handleClick = (event: React.MouseEvent | React.TouchEvent) => {
-    event.preventDefault();
-    console.log("Audio button clicked.");
-    if (!audioElements.length) {
-      const newAudioElements = tracks.map((track) => {
-        const audio = new Audio(track.src);
-        audio.volume = track.volume / 100;
-        audio.load();
-        return audio;
-      });
-
-      const loadPromises = newAudioElements.map((audio, index) => {
-        return new Promise((resolve) => {
-          audio.oncanplay = () => {
-            loadedRef.current += 1;
-            console.log(`Audio File ${tracks[index].src} loaded.`);
-            resolve(null);
-          };
-        });
-      });
-
-      Promise.all(loadPromises).then(() => {
-        if (loadedRef.current !== tracks.length) {
-          console.log(
-            `Something went wrong. Only ${loadedRef.current} out of ${tracks.length} loaded.`
-          );
-        } else {
-          console.log(`All audio files loaded.`);
-          setAudioElements(newAudioElements);
-          // Play the tracks after they are all loaded
-          newAudioElements.forEach((audio) => {
-            console.log("Playing audio.");
-            audio.play();
-          });
-          setIsPlaying(true);
-        }
-      });
-    } else {
-      if (!isPlaying) {
-        audioElements.forEach((audio) => {
-          audio.play();
-          console.log("Playing audio.");
-        });
+  useEffect(() => {
+    const checkLoaded = () => {
+      if (
+        vocals?.state() === "loaded" &&
+        other?.state() === "loaded" &&
+        bass?.state() === "loaded" &&
+        drums?.state() === "loaded"
+      ) {
+        setIsLoaded(true);
+        console.log("All tracks loaded");
+        clearInterval(intervalId);
       } else {
-        audioElements.forEach((audio) => {
-          audio.pause();
-          console.log("Pausing audio.");
-        });
+        console.log("Not all tracks loaded");
       }
+    };
+
+    checkLoaded();
+    const intervalId = setInterval(checkLoaded, 500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [vocals, other, bass, drums]);
+
+  const controlPlayback = () => {
+    if (isLoaded) {
+      if (isPlaying) {
+        vocals?.pause();
+        other?.pause();
+        bass?.pause();
+        drums?.pause();
+        console.log("Paused");
+      } else {
+        vocals?.play();
+        other?.play();
+        bass?.play();
+        drums?.play();
+        console.log("Playing");
+      }
+
       setIsPlaying(!isPlaying);
     }
   };
 
   return (
     <button
-      className="w-[90%] h-[90%] rounded-full bg-[#c4a89c] hover:bg-[#c2a497] shadow-stem-inner-button cursor-pointer"
-      onClick={handleClick}
-      onTouchEnd={handleClick}
+      className={`w-[90%] h-[90%] rounded-full ${
+        isLoaded ? "bg-[#c4a89c] hover:bg-[#bea296]" : "bg-red-500"
+      } shadow-stem-inner-button cursor-pointer`}
+      onClick={controlPlayback}
     ></button>
   );
 };
