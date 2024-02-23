@@ -10,6 +10,14 @@ html,
 body {
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
 }
 
 @layer utilities {
@@ -18,31 +26,17 @@ body {
   }
 }
 
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
+#scrollbar1::-webkit-scrollbar {
+  width: 16px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  /* Customize the appearance of the thumb */
-  -webkit-appearance: none;
-  appearance: none;
-  /* Set the size and color of the thumb */
-  width: 20px; /* Adjust as needed */
-  height: 20px; /* Adjust as needed */
-  background-color: #ffffff; /* Adjust as needed */
-  border-radius: 50%; /* Ensures a circular shape */
-  border: 2px solid #ffffff; /* Adjust as needed */
-  cursor: pointer;
+#scrollbar1::-webkit-scrollbar-track {
+  background-color: transparent;
 }
 
-input[type="range"]::-moz-range-thumb {
-  /* Customize the appearance of the thumb for Firefox */
-  width: 20px; /* Adjust as needed */
-  height: 20px; /* Adjust as needed */
-  background-color: #ffffff; /* Adjust as needed */
-  border-radius: 50%; /* Ensures a circular shape */
-  border: 2px solid #ffffff; /* Adjust as needed */
-  cursor: pointer;
+#scrollbar1::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  background-color: #b3b3b3;
 }

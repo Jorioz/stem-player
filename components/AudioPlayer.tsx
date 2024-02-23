@@ -134,6 +134,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
     }
   };
 
+  vocals?.on("end", () => {
+    setIsPlaying(false);
+  });
+
   return (
     <button
       className={`w-[90%] h-[90%] rounded-full ${
