@@ -493,7 +493,7 @@ export default function Home() {
       >
         <img
           src="instructions.svg"
-          className={`aspect-square md:h-160 md:w-160 sm:h-128 sm:w-128 w-96 h-96 transition-opacity duration-500 ${
+          className={`aspect-square md:h-160 md:w-160 sm:h-[30rem] sm:w-[30rem] w-[22rem] h-[22rem] transition-opacity duration-500 ${
             isInstructionVisible ? "opacity-100" : "opacity-0"
           }`}
         />
