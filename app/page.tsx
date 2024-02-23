@@ -6,6 +6,7 @@ const AudioPlayer = dynamic(() => import("../components/AudioPlayer"), {
   ssr: false,
 });
 import dynamic from "next/dynamic";
+import { PiMicrophoneStageFill } from "react-icons/pi";
 
 export default function Home() {
   const [vocalsVolume, setVocalsVolume] = useState(100);
@@ -566,7 +567,82 @@ export default function Home() {
               </div>
             </div>
             <div className="col-span-3 row-span-3 bg-transparent"></div>
+              >
+                <LightModule colors={colors} volume={vocalsVolume} />
+              </div>
+            </div>
+            <div className="col-span-3 row-span-3 bg-transparent"></div>
 
+            <div
+              className="col-span-3 row-span-1 mx-4 relative flex  items-center cursor-pointer"
+              id="left"
+              onMouseEnter={() => handleMouseEnter("left")}
+              onMouseLeave={() => handleMouseLeave("left")}
+              onMouseDown={handleMouseDown("left")}
+              onMouseUp={handleMouseUp("left")}
+              onMouseMove={handleMouseDrag("left")}
+              onTouchStart={handleTouchStart("left")}
+              onTouchEnd={handleTouchEnd("left")}
+              onTouchMove={handleTouchMove("left")}
+            >
+              <div className="w-full h-full rounded-full shadow-stem-inner-left grid grid-cols-4 items-center">
+                <LightModule colors={colors} volume={bassVolume} />
+              </div>
+            </div>
+            <div className="col-span-1 row-span-1" id="middle">
+              <div className="w-full h-full rounded-full shadow-stem-inner-mid flex justify-center items-center">
+                <AudioPlayer
+                  tracks={[
+                    { src: "/vocals.wav", volume: vocalsVolume },
+                    { src: "/other.wav", volume: otherVolume },
+                    { src: "/bass.wav", volume: bassVolume },
+                    { src: "/drums.wav", volume: drumsVolume },
+                  ]}
+                />
+              </div>
+            </div>
+            <div
+              className="col-span-3 row-span-1 mx-4 relative cursor-pointer"
+              id="right"
+              onMouseEnter={() => handleMouseEnter("right")}
+              onMouseLeave={() => handleMouseLeave("right")}
+              onMouseDown={handleMouseDown("right")}
+              onMouseUp={handleMouseUp("right")}
+              onMouseMove={handleMouseDrag("right")}
+              onTouchStart={handleTouchStart("right")}
+              onTouchEnd={handleTouchEnd("right")}
+              onTouchMove={handleTouchMove("right")}
+            >
+              <div
+                className="w-full h-full rounded-full shadow-stem-inner-right grid grid-cols-4 items-center"
+                dir="rtl"
+              >
+                <LightModule colors={colors} volume={drumsVolume} />
+              </div>
+            </div>
+            <div className="col-span-3 row-span-3 bg-transparent"></div>
+            <div
+              className="col-span-1 row-span-3 my-4 relative cursor-pointer flex justify-center items-center"
+              id="bottom"
+              onMouseEnter={() => handleMouseEnter("bottom")}
+              onMouseLeave={() => handleMouseLeave("bottom")}
+              onMouseDown={handleMouseDown("bottom")}
+              onMouseUp={handleMouseUp("bottom")}
+              onMouseMove={handleMouseDrag("bottom")}
+              onTouchStart={handleTouchStart("bottom")}
+              onTouchEnd={handleTouchEnd("bottom")}
+              onTouchMove={handleTouchMove("bottom")}
+            >
+              <div className="w-full h-full rounded-full shadow-stem-inner-bottom grid grid-rows-4 items-center rotate-180">
+                <LightModule colors={colors} volume={otherVolume} />
+              </div>
+            </div>
+            <div className="col-span-3 row-span-3 bg-transparent"></div>
+          </div>
+          <div className="w-full h-full bg-[#c4a89c] rounded-full shadow-stem-shadow"></div>
+        </div>
+      </main>
+    </>
             <div
               className="col-span-3 row-span-1 mx-4 relative flex  items-center cursor-pointer"
               id="left"
