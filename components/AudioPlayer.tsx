@@ -1,19 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Howl } from "howler";
 //@ts-ignore
 import { unmute } from "/unmute.js";
 
-interface AudioPlayerProps {
+type AudioPlayerProps = {
   tracks: { src: string; volume: number }[];
-}
+  selectedTrack: string | null;
+  setIsLoaderVisible: (isVisible: boolean) => void;
+};
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  tracks,
+  selectedTrack,
+  setIsLoaderVisible,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [vocals, setVocals] = useState<Howl | null>(null);
   const [other, setOther] = useState<Howl | null>(null);
   const [bass, setBass] = useState<Howl | null>(null);
   const [drums, setDrums] = useState<Howl | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isPathValid, setIsPathValid] = useState(false);
+  const prevSelectedTrack = useRef(selectedTrack);
 
   // Unmute WebAudio on iOS. From: https://github.com/swevans/unmute
   useEffect(() => {
@@ -44,54 +52,122 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
     };
   }, []);
 
+  // Reset if selected track is changed
   useEffect(() => {
-    if (!vocals) {
-      const newVocals = new Howl({
-        src: [tracks[0].src],
-        volume: 1,
-      });
-      setVocals(newVocals);
-      console.log("Vocals Loaded");
-    } else {
-      vocals.volume(tracks[0].volume / 100);
+    if (selectedTrack !== prevSelectedTrack.current) {
+      setIsLoaded(false);
+      setIsPlaying(false);
+      setIsPathValid(false);
+      setVocals(null);
+      setOther(null);
+      setBass(null);
+      setDrums(null);
+      vocals?.unload();
+      other?.unload();
+      bass?.unload();
+      drums?.unload();
+      //console.log("Reset");
+      prevSelectedTrack.current = selectedTrack;
+      //console.log("AudioPlayer using id:", selectedTrack);
     }
+  }, [selectedTrack]);
 
-    if (!other) {
-      const newOther = new Howl({
-        src: [tracks[1].src],
-        volume: 1,
-      });
-      setOther(newOther);
-      console.log("Other Loaded");
-    } else {
-      other.volume(tracks[1].volume / 100);
-    }
-
-    if (!bass) {
-      const newBass = new Howl({
-        src: [tracks[2].src],
-        volume: 1,
-      });
-      setBass(newBass);
-      console.log("Bass Loaded");
-    } else {
-      bass.volume(tracks[2].volume / 100);
-    }
-
-    if (!drums) {
-      const newDrums = new Howl({
-        src: [tracks[3].src],
-        volume: tracks[3].volume / 100,
-      });
-      setDrums(newDrums);
-      console.log("Drums Loaded");
-    } else {
-      drums.volume(tracks[3].volume / 100);
-    }
-  }, [tracks]);
-
+  // Check if tracks exist:
   useEffect(() => {
-    const checkLoaded = () => {
+    if (tracks !== null) {
+      tracks.forEach((track) => {
+        if (track.src !== null && selectedTrack !== null) {
+          fetch(track.src)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              //console.log("Track exists:", track.src);
+              setIsPathValid(true);
+            })
+            .catch((error) => {
+              console.error(
+                "Track does not exist:",
+                track.src,
+                "Error:",
+                error
+              );
+            });
+        }
+      });
+    }
+  }, [selectedTrack]);
+
+  // Load tracks:
+  useEffect(() => {
+    if (isPathValid) {
+      if (!vocals) {
+        // If no vocals, create new instance
+        const newVocals = new Howl({
+          src: [tracks[0].src],
+          volume: 1,
+          onload: () => {
+            //console.log("Vocals loaded");
+            setVocals(newVocals);
+          },
+        });
+      } else {
+        // If Vocals exist:
+        //console.log("Vocals exist");
+        //console.log("Vocals state:", vocals.state());
+        vocals.volume(tracks[0].volume / 100);
+      }
+
+      if (!other) {
+        // If no Other, create new instance
+        const newOther = new Howl({
+          src: [tracks[1].src],
+          volume: 1,
+          onload: () => {
+            //console.log("Other loaded");
+            setOther(newOther);
+          },
+        });
+      } else {
+        // If Other exist:
+        //console.log("Vocals exist");
+        //console.log("Vocals state:", other.state());
+        other.volume(tracks[1].volume / 100);
+      }
+
+      if (!bass) {
+        // If no Bass, create new instance
+        const newBass = new Howl({
+          src: [tracks[2].src],
+          volume: 1,
+          onload: () => {
+            //console.log("Bass loaded");
+            setBass(newBass);
+          },
+        });
+      } else {
+        // If Other exist:
+        //console.log("Bass exist");
+        //console.log("Bass state:", bass.state());
+        bass.volume(tracks[2].volume / 100);
+      }
+
+      if (!drums) {
+        // If no Drum, create new instance
+        const newDrums = new Howl({
+          src: [tracks[3].src],
+          volume: 1,
+          onload: () => {
+            //console.log("Drums loaded");
+            setDrums(newDrums);
+          },
+        });
+      } else {
+        // If Drums exist:
+        //console.log("Drum exist");
+        //console.log("Drum state:", drums.state());
+        drums.volume(tracks[3].volume / 100);
+      }
       if (
         vocals?.state() === "loaded" &&
         other?.state() === "loaded" &&
@@ -99,21 +175,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
         drums?.state() === "loaded"
       ) {
         setIsLoaded(true);
-        console.log("All tracks loaded");
-        clearInterval(intervalId);
-      } else {
-        console.log("Not all tracks loaded");
       }
-    };
+    }
+  });
 
-    checkLoaded();
-    const intervalId = setInterval(checkLoaded, 500);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [vocals, other, bass, drums]);
-
+  // Control Playback:
   const controlPlayback = () => {
     if (isLoaded) {
       if (isPlaying) {
@@ -121,18 +187,29 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
         other?.pause();
         bass?.pause();
         drums?.pause();
-        console.log("Paused");
+        //console.log("Paused");
+        setIsPlaying(false);
       } else {
         vocals?.play();
         other?.play();
         bass?.play();
         drums?.play();
-        console.log("Playing");
+        //console.log("Playing");
+        setIsPlaying(true);
       }
-
-      setIsPlaying(!isPlaying);
     }
   };
+
+  // Show loader when tracks arent loaded
+  useEffect(() => {
+    if (selectedTrack !== null) {
+      if (!isLoaded) {
+        setIsLoaderVisible(true);
+      } else {
+        setIsLoaderVisible(false);
+      }
+    }
+  }, [isLoaded, setIsLoaderVisible, selectedTrack]);
 
   vocals?.on("end", () => {
     setIsPlaying(false);
@@ -140,9 +217,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks }) => {
 
   return (
     <button
-      className={`w-[90%] h-[90%] rounded-full ${
-        isLoaded ? "bg-[#c4a89c] hover:bg-[#bea296]" : "bg-red-500"
-      } shadow-stem-inner-button cursor-pointer`}
+      className={`w-[90%] h-[90%] rounded-full bg-[#c4a89c] hover:bg-[#bea296] shadow-stem-inner-button cursor-pointer`}
       onClick={controlPlayback}
     ></button>
   );
