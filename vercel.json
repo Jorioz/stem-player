@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/stemplayer/(.*)",
+      "destination": "https://stem-player.vercel.app/"
+    }
+  ]
+}
