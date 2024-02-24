@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/stemplayer/(.*)",
-      "destination": "https://stem-player.vercel.app/:1"
+      "destination": "https://stem-player.vercel.app/"
     }
   ]
 }
