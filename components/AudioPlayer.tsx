@@ -6,9 +6,14 @@ import { unmute } from "/unmute.js";
 type AudioPlayerProps = {
   tracks: { src: string; volume: number }[];
   selectedTrack: string | null;
+  setIsLoaderVisible: (isVisible: boolean) => void;
 };
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks, selectedTrack }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  tracks,
+  selectedTrack,
+  setIsLoaderVisible,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [vocals, setVocals] = useState<Howl | null>(null);
   const [other, setOther] = useState<Howl | null>(null);
@@ -163,9 +168,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks, selectedTrack }) => {
         //console.log("Drum state:", drums.state());
         drums.volume(tracks[3].volume / 100);
       }
-      if (vocals && other && bass && drums) {
+      if (
+        vocals?.state() === "loaded" &&
+        other?.state() === "loaded" &&
+        bass?.state() === "loaded" &&
+        drums?.state() === "loaded"
+      ) {
         setIsLoaded(true);
-        //console.log("READY TO PLAY");
       }
     }
   });
@@ -191,11 +200,20 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ tracks, selectedTrack }) => {
     }
   };
 
+  // Show loader when tracks arent loaded
+  useEffect(() => {
+    if (selectedTrack !== null) {
+      if (!isLoaded) {
+        setIsLoaderVisible(true);
+      } else {
+        setIsLoaderVisible(false);
+      }
+    }
+  }, [isLoaded, setIsLoaderVisible, selectedTrack]);
+
   return (
     <button
-      className={`w-[90%] h-[90%] rounded-full ${
-        isLoaded ? "bg-[#c4a89c] hover:bg-[#bea296]" : "bg-red-500"
-      } shadow-stem-inner-button cursor-pointer`}
+      className={`w-[90%] h-[90%] rounded-full bg-[#c4a89c] hover:bg-[#bea296] shadow-stem-inner-button cursor-pointer`}
       onClick={controlPlayback}
     ></button>
   );

@@ -9,6 +9,7 @@ interface TracksProps {
   tagColor: string;
   extra?: string;
   extraColor?: string;
+  toggleLoading: () => void;
   setIsTrackSelected: (id: string) => void;
 }
 
@@ -22,21 +23,19 @@ function Tracks({
   extra,
   extraColor,
   setIsTrackSelected,
+  toggleLoading,
 }: TracksProps) {
   const [isTrackSelected, setTrackSelected] = useState(false);
 
   const handleClick = () => {
     setTrackSelected(!isTrackSelected);
     setIsTrackSelected(id);
+    toggleLoading();
   };
 
   return (
     <button className="text-left" onClick={handleClick}>
-      <div
-        className={`w-full flex h-28 md:h-32 p-2 my-2 ${
-          isTrackSelected ? "bg-stone-200" : "hover:bg-stone-200"
-        }`}
-      >
+      <div className={`w-full flex h-28 md:h-32 p-2 my-2 hover:bg-stone-200 `}>
         <img className="w-auto h-full shadow-md mr-2 rounded-md" src={src} />
         <div className="flex flex-col justify-center flex-1">
           <div className="mx-1 font-bold">{title}</div>

@@ -23,6 +23,7 @@ export default function Home() {
 
   const [isInstructionVisible, setIsInstructionVisible] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [isLoaderVisible, setIsLoaderVisible] = useState(false);
 
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
 
@@ -73,6 +74,11 @@ export default function Home() {
         }
         break;
     }
+  };
+
+  const toggleLoading = () => {
+    setIsMenuVisible(!isMenuVisible);
+    setIsLoaderVisible(isLoaderVisible);
   };
 
   const handleMouseEnter = (id: string) => {
@@ -486,6 +492,7 @@ export default function Home() {
                   id="01"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/cf/73/dc/cf73dc77-d33e-0b52-9a70-75f91c1eae09/22UMGIM84207.rgb.jpg/600x600bb.jpg"
                   setIsTrackSelected={handleTrackSelect}
+                  toggleLoading={toggleLoading}
                 />
                 <Tracks
                   title="Clocks"
@@ -497,6 +504,7 @@ export default function Home() {
                   id="02"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b9/b4/2a/b9b42ad1-1e25-5096-da43-497a247e69a3/190295978051.jpg/600x600bb.jpg"
                   setIsTrackSelected={handleTrackSelect}
+                  toggleLoading={toggleLoading}
                 />
                 <Tracks
                   title="777"
@@ -508,6 +516,7 @@ export default function Home() {
                   id="03"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/4e/b2/25/4eb22575-99e3-8c06-7446-51a99add8b0f/075679754585.jpg/600x600bb.jpg"
                   setIsTrackSelected={handleTrackSelect}
+                  toggleLoading={toggleLoading}
                 />
 
                 <Tracks
@@ -520,6 +529,7 @@ export default function Home() {
                   id="04"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7d/3c/de/7d3cdeec-948c-30a8-fade-b0d000ced138/811395035689.png/600x600bb.jpg"
                   setIsTrackSelected={handleTrackSelect}
+                  toggleLoading={toggleLoading}
                 />
 
                 <Tracks
@@ -532,6 +542,7 @@ export default function Home() {
                   id="05"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/0e/ef/18/0eef1893-24fa-2878-558b-457e03d4b770/703980546697.png/600x600bb.jpg"
                   setIsTrackSelected={handleTrackSelect}
+                  toggleLoading={toggleLoading}
                 />
               </div>
             </div>
@@ -577,23 +588,58 @@ export default function Home() {
         </div>
       </div>
 
-      <footer
-        className={`absolute bottom-0 left-0 w-full h-20 flex items-center justify-center font-mono transition-all duration-100  ${
-          isInstructionVisible || isMenuVisible ? "opacity-0" : "opacity-100"
+      <div
+        className={`absolute w-full h-full top-0 z-50 ${
+          isLoaderVisible ? "visible" : "hidden"
         }`}
       >
-        Another Project by
-        <a
-          href="https://github.com/Jorioz"
-          className="font-bold ml-2 underline"
-          target="_blank"
-        >
-          Jorio
-        </a>
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="w-32 sm:w-36 md:w-40  aspect-square flex flex-col items-center justify-center p-10">
+            <div role="status">
+              <svg
+                aria-hidden="true"
+                className="inline w-full aspect-square text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-white"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer
+        className={`absolute bottom-0 left-0 w-full h-20 flex items-center justify-center text-center font-mono transition-all duration-100  ${
+          isInstructionVisible || isMenuVisible ? "opacity-0" : "opacity-100"
+        } ${isLoaderVisible ? "text-white" : ""}`}
+      >
+        {isLoaderVisible ? (
+          "Loading :: This might take a while on mobile..."
+        ) : (
+          <>
+            Another Project by
+            <a
+              href="https://github.com/Jorioz"
+              className="font-bold ml-2 underline"
+              target="_blank"
+            >
+              Jorio
+            </a>
+          </>
+        )}
       </footer>
       <main
-        className={`flex h-svh flex-col items-center justify-center transition-all duration-500  ${
-          isInstructionVisible || isMenuVisible
+        className={`flex h-svh flex-col items-center justify-center transition-all duration-500   ${
+          isInstructionVisible || isMenuVisible || isLoaderVisible
             ? "bg-[rgba(0,0,0,0.5)]"
             : "bg-[rgba(0,0,0,0.0)]"
         }`}
@@ -646,7 +692,8 @@ export default function Home() {
               <div className="w-full h-full rounded-full shadow-stem-inner-mid flex justify-center items-center">
                 <AudioPlayer
                   tracks={tracksData}
-                  selectedTrack={selectedTrack} // Pass selectedTrack to AudioPlayer
+                  selectedTrack={selectedTrack}
+                  setIsLoaderVisible={setIsLoaderVisible}
                 />
               </div>
             </div>
