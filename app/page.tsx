@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import LightModule from "../components/LightModule";
 import Tracks from "../components/Tracks";
 const AudioPlayer = dynamic(() => import("../components/AudioPlayer"), {
@@ -24,7 +24,56 @@ export default function Home() {
   const [isInstructionVisible, setIsInstructionVisible] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
+  const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
+
   const colors = ["#f7584d", "#f7694d", "#f74d6f", "#462eff"];
+
+  const tracksData = [
+    { src: `${selectedTrack}/vocals.wav`, volume: vocalsVolume },
+    { src: `${selectedTrack}/other.wav`, volume: otherVolume },
+    { src: `${selectedTrack}/bass.wav`, volume: bassVolume },
+    { src: `${selectedTrack}/drums.wav`, volume: drumsVolume },
+  ];
+
+  const handleTrackSelect = (id: string) => {
+    switch (id) {
+      case "01":
+        if (selectedTrack === "jid") {
+        } else {
+          setSelectedTrack("jid");
+          console.log("Library: Selected JID");
+        }
+        break;
+      case "02":
+        if (selectedTrack === "coldplay") {
+        } else {
+          setSelectedTrack("coldplay");
+          console.log("Library: Selected Coldplay");
+        }
+        break;
+      case "03":
+        if (selectedTrack === "silksonic") {
+        } else {
+          setSelectedTrack("silksonic");
+          console.log("Library: Selected Silk Sonic");
+        }
+        break;
+      case "04":
+        if (selectedTrack === "kda") {
+        } else {
+          setSelectedTrack("kda");
+          console.log("Library: Selected K/DA");
+        }
+        break;
+      case "05":
+        if (selectedTrack === "throttle") {
+        } else {
+          setSelectedTrack("throttle");
+          console.log("Library: Selected Throttle");
+        }
+        break;
+    }
+  };
 
   const handleMouseEnter = (id: string) => {
     switch (id) {
@@ -428,13 +477,15 @@ export default function Home() {
                 id="scrollbar1"
               >
                 <Tracks
-                  title="Raydar"
+                  title="Lauder Too"
                   artist="JID"
                   tags="Hip-Hop"
                   tagColor="bg-blue-400"
                   extra="Bass Heavy"
                   extraColor="bg-red-400"
+                  id="01"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/cf/73/dc/cf73dc77-d33e-0b52-9a70-75f91c1eae09/22UMGIM84207.rgb.jpg/600x600bb.jpg"
+                  setIsTrackSelected={handleTrackSelect}
                 />
                 <Tracks
                   title="Clocks"
@@ -443,7 +494,9 @@ export default function Home() {
                   tagColor="bg-green-400"
                   extra="Piano Heavy"
                   extraColor="bg-red-400"
+                  id="02"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b9/b4/2a/b9b42ad1-1e25-5096-da43-497a247e69a3/190295978051.jpg/600x600bb.jpg"
+                  setIsTrackSelected={handleTrackSelect}
                 />
                 <Tracks
                   title="777"
@@ -452,7 +505,9 @@ export default function Home() {
                   tagColor="bg-yellow-400"
                   extra="Drum Heavy"
                   extraColor="bg-red-400"
+                  id="03"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/4e/b2/25/4eb22575-99e3-8c06-7446-51a99add8b0f/075679754585.jpg/600x600bb.jpg"
+                  setIsTrackSelected={handleTrackSelect}
                 />
 
                 <Tracks
@@ -462,7 +517,9 @@ export default function Home() {
                   tagColor="bg-pink-400"
                   extra="Just For Fun"
                   extraColor="bg-red-200"
+                  id="04"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/7d/3c/de/7d3cdeec-948c-30a8-fade-b0d000ced138/811395035689.png/600x600bb.jpg"
+                  setIsTrackSelected={handleTrackSelect}
                 />
 
                 <Tracks
@@ -472,7 +529,9 @@ export default function Home() {
                   tagColor="bg-purple-400"
                   extra="Just For Fun"
                   extraColor="bg-red-200"
+                  id="05"
                   src="https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/0e/ef/18/0eef1893-24fa-2878-558b-457e03d4b770/703980546697.png/600x600bb.jpg"
+                  setIsTrackSelected={handleTrackSelect}
                 />
               </div>
             </div>
@@ -586,12 +645,8 @@ export default function Home() {
             <div className="col-span-1 row-span-1" id="middle">
               <div className="w-full h-full rounded-full shadow-stem-inner-mid flex justify-center items-center">
                 <AudioPlayer
-                  tracks={[
-                    { src: "/vocals.wav", volume: vocalsVolume },
-                    { src: "/other.wav", volume: otherVolume },
-                    { src: "/bass.wav", volume: bassVolume },
-                    { src: "/drums.wav", volume: drumsVolume },
-                  ]}
+                  tracks={tracksData}
+                  selectedTrack={selectedTrack} // Pass selectedTrack to AudioPlayer
                 />
               </div>
             </div>

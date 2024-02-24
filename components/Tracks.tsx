@@ -1,13 +1,15 @@
-import React from "react";
+import { useState } from "react";
 
 interface TracksProps {
   title: string;
   artist: string;
   tags: string;
   src: string;
+  id: string;
   tagColor: string;
   extra?: string;
   extraColor?: string;
+  setIsTrackSelected: (id: string) => void;
 }
 
 function Tracks({
@@ -15,13 +17,26 @@ function Tracks({
   artist,
   tags,
   src,
+  id,
   tagColor,
   extra,
   extraColor,
+  setIsTrackSelected,
 }: TracksProps) {
+  const [isTrackSelected, setTrackSelected] = useState(false);
+
+  const handleClick = () => {
+    setTrackSelected(!isTrackSelected);
+    setIsTrackSelected(id);
+  };
+
   return (
-    <button className="text-left">
-      <div className="w-full flex h-28 md:h-32 hover:bg-stone-200 p-2 my-2">
+    <button className="text-left" onClick={handleClick}>
+      <div
+        className={`w-full flex h-28 md:h-32 p-2 my-2 ${
+          isTrackSelected ? "bg-stone-200" : "hover:bg-stone-200"
+        }`}
+      >
         <img className="w-auto h-full shadow-md mr-2 rounded-md" src={src} />
         <div className="flex flex-col justify-center flex-1">
           <div className="mx-1 font-bold">{title}</div>
