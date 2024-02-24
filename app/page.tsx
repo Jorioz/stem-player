@@ -505,7 +505,7 @@ export default function Home() {
                 id="scrollbar1"
               >
                 <Tracks
-                  title="Lauder Too"
+                  title="Raydar"
                   artist="JID"
                   tags="Hip-Hop"
                   tagColor="bg-blue-400"
