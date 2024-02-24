@@ -211,6 +211,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }
   }, [isLoaded, setIsLoaderVisible, selectedTrack]);
 
+  vocals?.on("end", () => {
+    setIsPlaying(false);
+  });
+
   return (
     <button
       className={`w-[90%] h-[90%] rounded-full bg-[#c4a89c] hover:bg-[#bea296] shadow-stem-inner-button cursor-pointer`}

@@ -26,8 +26,19 @@ export default function Home() {
   const [isLoaderVisible, setIsLoaderVisible] = useState(false);
 
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
+  const [randomPalette, setRandomPalette] = useState<string[]>([
+    "#bd4d4d",
+    "#bd4d4d",
+    "#bd4d4d",
+    "#bd4d4d",
+  ]);
 
-  const colors = ["#f7584d", "#f7694d", "#f74d6f", "#462eff"];
+  const colors = [
+    ["#FF9843", "#FFDD95", "#86A7FC", "#3468C0"],
+    ["#FFE5E5", "#E0AED0", "AC87C5", "#756AB6"],
+    ["#F3F3F3", "#A3B763", "#AF2655", "#860A35"],
+    ["#D0E7D2", "#B0D9B1", "#79AC78", "#618264"],
+  ];
 
   const tracksData = [
     { src: `${selectedTrack}/vocals.wav`, volume: vocalsVolume },
@@ -36,11 +47,17 @@ export default function Home() {
     { src: `${selectedTrack}/drums.wav`, volume: drumsVolume },
   ];
 
+  const randomColor = () => {
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    setRandomPalette(colors[randomIndex]);
+  };
+
   const handleTrackSelect = (id: string) => {
     switch (id) {
       case "01":
         if (selectedTrack === "jid") {
         } else {
+          randomColor();
           setSelectedTrack("jid");
           console.log("Library: Selected JID");
         }
@@ -48,6 +65,7 @@ export default function Home() {
       case "02":
         if (selectedTrack === "coldplay") {
         } else {
+          randomColor();
           setSelectedTrack("coldplay");
           console.log("Library: Selected Coldplay");
         }
@@ -55,6 +73,7 @@ export default function Home() {
       case "03":
         if (selectedTrack === "silksonic") {
         } else {
+          randomColor();
           setSelectedTrack("silksonic");
           console.log("Library: Selected Silk Sonic");
         }
@@ -62,6 +81,7 @@ export default function Home() {
       case "04":
         if (selectedTrack === "kda") {
         } else {
+          randomColor();
           setSelectedTrack("kda");
           console.log("Library: Selected K/DA");
         }
@@ -69,6 +89,7 @@ export default function Home() {
       case "05":
         if (selectedTrack === "throttle") {
         } else {
+          randomColor();
           setSelectedTrack("throttle");
           console.log("Library: Selected Throttle");
         }
@@ -465,9 +486,10 @@ export default function Home() {
                 Use custom song <a className="font-bold">(max 5min)</a>:
               </h1>
               <input
-                className="bg-stone-300 rounded-full m-5 w-full p-5 text-gray-800 font-mono font-bold"
+                className="bg-stone-300 rounded-full m-5 w-full p-5 text-gray-800 font-mono font-bold cursor-not-allowed"
                 type="text"
-                placeholder="Enter a YouTube URL"
+                placeholder="Working on it..."
+                disabled
               ></input>
             </div>
             <div className="flex flex-col overflow-y-auto">
@@ -663,17 +685,14 @@ export default function Home() {
               onTouchEnd={handleTouchEnd("top")}
               onTouchMove={handleTouchMove("top")}
             >
-              <div
-                className={`w-full h-full rounded-full shadow-stem-inner-top grid grid-rows-4 items-center relative 
-              `}
-              >
-                <LightModule colors={colors} volume={vocalsVolume} />
+              <div className="w-full h-full rounded-full shadow-stem-inner-top grid grid-rows-4 items-center relative">
+                <LightModule colors={randomPalette} volume={vocalsVolume} />
               </div>
             </div>
             <div className="col-span-3 row-span-3 bg-transparent"></div>
 
             <div
-              className="col-span-3 row-span-1 mx-4 relative flex  items-center cursor-pointer"
+              className="col-span-3 row-span-1 mx-4 relative flex items-center cursor-pointer"
               id="left"
               onMouseEnter={() => handleMouseEnter("left")}
               onMouseLeave={() => handleMouseLeave("left")}
@@ -684,8 +703,8 @@ export default function Home() {
               onTouchEnd={handleTouchEnd("left")}
               onTouchMove={handleTouchMove("left")}
             >
-              <div className="w-full h-full rounded-full shadow-stem-inner-left grid grid-cols-4 items-center">
-                <LightModule colors={colors} volume={bassVolume} />
+              <div className="w-full h-full rounded-full shadow-stem-inner-top grid grid-cols-4 items-center relative">
+                <LightModule colors={randomPalette} volume={bassVolume} />
               </div>
             </div>
             <div className="col-span-1 row-span-1" id="middle">
@@ -713,7 +732,7 @@ export default function Home() {
                 className="w-full h-full rounded-full shadow-stem-inner-right grid grid-cols-4 items-center"
                 dir="rtl"
               >
-                <LightModule colors={colors} volume={drumsVolume} />
+                <LightModule colors={randomPalette} volume={drumsVolume} />
               </div>
             </div>
             <div className="col-span-3 row-span-3 bg-transparent"></div>
@@ -730,7 +749,7 @@ export default function Home() {
               onTouchMove={handleTouchMove("bottom")}
             >
               <div className="w-full h-full rounded-full shadow-stem-inner-bottom grid grid-rows-4 items-center rotate-180">
-                <LightModule colors={colors} volume={otherVolume} />
+                <LightModule colors={randomPalette} volume={otherVolume} />
               </div>
             </div>
             <div className="col-span-3 row-span-3 bg-transparent"></div>

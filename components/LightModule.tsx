@@ -40,42 +40,34 @@ const LightModule: React.FC<LightModuleProps> = ({ colors, volume }) => {
       }
     }
 
-    const boxShadowXs = `0px 0px 12px 10px rgba(${hexToRgb(
-      color
-    )}, ${opacity})`;
-    const boxShadowSm = `0px 0px 15px 12px rgba(${hexToRgb(
-      color
-    )}, ${opacity})`;
-    const boxShadowMd = `0px 0px 20px 20px rgba(${hexToRgb(
-      color
-    )}, ${opacity})`;
-    const boxShadowLg = `0px 0px 20px 20px rgba(${hexToRgb(
-      color
-    )}, ${opacity})`;
+    const boxShadowXs = `0px 0px 15px 5px rgba(${hexToRgb(color)}, ${opacity})`;
+    const boxShadowSm = `0px 0px 15px 5px rgba(${hexToRgb(color)}, ${opacity})`;
+    const boxShadowMd = `0px 0px 15px 5px rgba(${hexToRgb(color)}, ${opacity})`;
+    const boxShadowLg = `0px 0px 15px 5px rgba(${hexToRgb(color)}, ${opacity})`;
 
     modules.push(
       <div
         key={i}
-        className="aspect-square w-auto h-[1%] rounded-full mx-auto"
+        className="aspect-square rounded-full mx-auto"
         style={{
           backgroundColor: `rgba(${hexToRgb(color)}, ${opacity})`,
-          boxShadow: `var(--shadow-size-xs)`, // Initial shadow size (xs)
+          boxShadow: `var(--shadow-size-xs)`,
         }}
       >
         <div
-          className="block sm:hidden lg:hidden md:hidden"
+          className="block sm:hidden lg:hidden md:hidden rounded-full w-5 h-5"
           style={{ boxShadow: boxShadowXs }}
         ></div>
         <div
-          className="sm:block lg:hidden md:hidden hidden"
+          className="sm:block lg:hidden md:hidden hidden rounded-full w-7 h-7"
           style={{ boxShadow: boxShadowSm }}
         ></div>
         <div
-          className="md:block lg:hidden sm:hidden hidden"
+          className="md:block lg:hidden sm:hidden hidden rounded-full w-10 h-10"
           style={{ boxShadow: boxShadowMd }}
         ></div>
         <div
-          className="lg:block md:hidden sm:hidden hidden"
+          className="lg:block md:hidden sm:hidden hidden rounded-full w-10 h-10"
           style={{ boxShadow: boxShadowLg }}
         ></div>
       </div>
