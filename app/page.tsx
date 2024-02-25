@@ -27,29 +27,31 @@ export default function Home() {
 
   const [selectedTrack, setSelectedTrack] = useState<string | null>(null);
   const [randomPalette, setRandomPalette] = useState<string[]>([
-    "#bd4d4d",
-    "#bd4d4d",
-    "#bd4d4d",
-    "#bd4d4d",
+    "#3747fe",
+    "#e6647f",
+    "#ff5760",
+    "#fc5543",
   ]);
 
   const colors = [
-    ["#FF9843", "#FFDD95", "#86A7FC", "#3468C0"],
-    ["#FFE5E5", "#E0AED0", "AC87C5", "#756AB6"],
-    ["#F3F3F3", "#A3B763", "#AF2655", "#860A35"],
-    ["#D0E7D2", "#B0D9B1", "#79AC78", "#618264"],
+    //OUT to IN
+    ["#3dfdf9", "#e0d1fd", "#f4d6ff", "#f38ff3"],
+    ["#3747fe", "#e6647f", "#ff5760", "#fc5543"],
+    ["#fef5bd", "#f4f0fe", "#d2edff", "#6bebff"],
+    ["#10e4bd", "#b3f5f5", "#ffe0f5", "#fa91ea"],
   ];
 
   const tracksData = [
-    { src: `${selectedTrack}/vocals.wav`, volume: vocalsVolume },
-    { src: `${selectedTrack}/other.wav`, volume: otherVolume },
-    { src: `${selectedTrack}/bass.wav`, volume: bassVolume },
-    { src: `${selectedTrack}/drums.wav`, volume: drumsVolume },
+    { src: `${selectedTrack}/vocals.mp3`, volume: vocalsVolume },
+    { src: `${selectedTrack}/other.mp3`, volume: otherVolume },
+    { src: `${selectedTrack}/bass.mp3`, volume: bassVolume },
+    { src: `${selectedTrack}/drums.mp3`, volume: drumsVolume },
   ];
 
   const randomColor = () => {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    setRandomPalette(colors[randomIndex]);
+    let newColors = colors.filter((color) => color !== randomPalette);
+    const randomIndex = Math.floor(Math.random() * newColors.length);
+    setRandomPalette(newColors[randomIndex]);
   };
 
   const handleTrackSelect = (id: string) => {
@@ -645,7 +647,7 @@ export default function Home() {
         } ${isLoaderVisible ? "text-white" : ""}`}
       >
         {isLoaderVisible ? (
-          "Loading :: This might take a while on mobile..."
+          "Loading Track..."
         ) : (
           <>
             Another Project by
