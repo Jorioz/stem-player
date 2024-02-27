@@ -6,6 +6,7 @@ const AudioPlayer = dynamic(() => import("../components/AudioPlayer"), {
   ssr: false,
 });
 import dynamic from "next/dynamic";
+import { IoSend } from "react-icons/io5";
 
 export default function Home() {
   const [vocalsVolume, setVocalsVolume] = useState(100);
@@ -445,6 +446,18 @@ export default function Home() {
     }
   };
 
+  // API Call
+  const [inputValue, setInputValue] = useState("");
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const response = await fetch("/api/process-youtube", {
+      method: "POST",
+      body: JSON.stringify({ link: inputValue }),
+    });
+    const data = await response.json();
+    console.log(data);
+  };
+
   return (
     <>
       <header
@@ -483,16 +496,25 @@ export default function Home() {
             </button>
           </div>
           <div className="w-full bg-white max-h-full lg:h-2/3 rounded-3xl my-5 flex flex-col overflow-hidden">
-            <div className="flex flex-col justify-center items-center px-5 pt-5">
+            <div className="flex flex-col justify-center items-center pt-5">
               <h1 className="font-mono text-sm md:text-base">
                 Use custom song <a className="font-bold">(max 5min)</a>:
               </h1>
-              <input
-                className="bg-stone-300 rounded-full m-5 w-full p-5 text-gray-800 font-mono font-bold cursor-not-allowed"
-                type="text"
-                placeholder="Working on it..."
-                disabled
-              ></input>
+              <form
+                className="w-full p-5 flex justify-around"
+                onSubmit={handleSubmit}
+              >
+                <input
+                  className="bg-stone-300 rounded-l-full w-full p-5 text-gray-800 font-mono font-bold"
+                  type="text"
+                  placeholder="Enter a YouTube URL"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                ></input>
+                <button className="aspect-square bg-stone-300 rounded-r-full flex items-center justify-center p-5 border-l-2 border-stone-400 hover:bg-stone-400 transition-all duration-150">
+                  <IoSend color={"gray"} size={24} />
+                </button>
+              </form>
             </div>
             <div className="flex flex-col overflow-y-auto">
               <div className="w-full flex justify-center items-center text-center">
