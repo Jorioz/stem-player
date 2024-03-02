@@ -80,9 +80,9 @@ async function downloadVideo(link: string) {
   });
 
   // Path where yt video downloads to:
-  const filePath = path.join(process.cwd(), `tmp/input/custom.mp3`);
+  const filePath = path.join("/tmp/input", "custom.mp3");
   // Path to the custom output directory:
-  const customDir = path.join(process.cwd(), `tmp/output`);
+  const customDir = "/tmp/output";
 
   // Create the custom output directory if it doesn't exist
   if (!fs.existsSync(customDir)) {
@@ -96,7 +96,7 @@ async function downloadVideo(link: string) {
   }
 
   // Create the input directory if it doesn't exist
-  const inputDir = path.join(process.cwd(), `tmp/input`);
+  const inputDir = "/tmp/input";
   if (!fs.existsSync(inputDir)) {
     fs.mkdirSync(inputDir, { recursive: true });
   }
@@ -114,10 +114,8 @@ async function processWithSpleeter() {
   let attempts = 0;
   while (attempts < 3) {
     try {
-      const inputFolder = await readdir(path.join(process.cwd(), `tmp/input`));
-      const customDirectory = await readdir(
-        path.join(process.cwd(), `tmp/output`)
-      );
+      const inputFolder = await readdir("/tmp/input");
+      const customDirectory = await readdir("/tmp/output");
       if (inputFolder.length === 0) {
         console.log("No MP3 found. Was the download successful?");
         attempts++;
@@ -129,7 +127,7 @@ async function processWithSpleeter() {
       if (customDirectory.length > 0) {
         console.log("Output directory was not emptied, clearing now...");
         customDirectory.forEach((file) => {
-          const fileToRemove = path.join(process.cwd(), `tmp/output`, file);
+          const fileToRemove = path.join("/tmp/output", file);
           fs.unlinkSync(fileToRemove);
         });
       } else {
@@ -149,7 +147,7 @@ async function processWithSpleeter() {
     console.log("Running Spleeter Python Script...");
     updateProcessingStatus(true);
     const { stdout, stderr } = await exec(
-      `python ${path.join(process.cwd(), `spleeter/main.py`)}`
+      `python ${path.join("/spleeter/main.py")}`
     );
     console.log(`stdout: ${stdout}`);
     console.error(`stderr: ${stderr}`);
