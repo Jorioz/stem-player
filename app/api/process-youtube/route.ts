@@ -77,9 +77,9 @@ async function downloadVideo(link: string) {
   const audioFormat = ytdl.chooseFormat(info.formats, {
     quality: "highestaudio",
   });
-  const filePath = "./public/spleeter/input/custom.mp3";
+  const filePath = "spleeter/input/custom.mp3";
   // Delete old contents if any:
-  const customDir = "./public/custom";
+  const customDir = "custom";
   fs.readdirSync(customDir).forEach((file) => {
     const fileToRemove = path.join(customDir, file);
     fs.unlinkSync(fileToRemove);
@@ -96,8 +96,8 @@ async function processWithSpleeter() {
   let attempts = 0;
   while (attempts < 3) {
     try {
-      const inputFolder = await readdir("./public/spleeter/input");
-      const customDirectory = await readdir("./public/custom");
+      const inputFolder = await readdir("spleeter/input");
+      const customDirectory = await readdir("custom");
 
       if (inputFolder.length === 0) {
         console.log("No MP3 found. Was the download successful?");
@@ -110,7 +110,7 @@ async function processWithSpleeter() {
       if (customDirectory.length > 0) {
         console.log("Custom directory was not emptied, clearing now...");
         customDirectory.forEach((file) => {
-          const fileToRemove = path.join("./public/custom", file);
+          const fileToRemove = path.join("custom", file);
           fs.unlinkSync(fileToRemove);
         });
       } else {
@@ -129,7 +129,7 @@ async function processWithSpleeter() {
   try {
     console.log("Running Spleeter Python Script...");
     updateProcessingStatus(true);
-    const { stdout, stderr } = await exec(`python ./public/spleeter/main.py`);
+    const { stdout, stderr } = await exec(`python spleeter/main.py`);
     console.log(`stdout: ${stdout}`);
     console.error(`stderr: ${stderr}`);
   } catch (error) {
