@@ -143,7 +143,7 @@ async function processWithSpleeter() {
     console.log("MP3 not found after 3 attempts. Exiting script.");
     return;
   }
-
+  /*
   try {
     console.log("Running Spleeter Python Script...");
     updateProcessingStatus(true);
@@ -171,4 +171,5 @@ async function processWithSpleeter() {
     console.error(`exec error: ${error}`);
     updateProcessingStatus(false);
   }
+  */
 }
