@@ -2,7 +2,8 @@ import ytdl from "ytdl-core";
 import fs from "fs";
 import path from "path";
 import util from "util";
-const exec = util.promisify(require("child_process").exec);
+import { exec, spawn } from "child_process";
+const execPromise = util.promisify(exec);
 
 const readdir = util.promisify(fs.readdir);
 
@@ -114,8 +115,8 @@ async function processWithSpleeter() {
   let attempts = 0;
   while (attempts < 3) {
     try {
-      const inputFolder = await readdir("/tmp/input");
-      const customDirectory = await readdir("/tmp/output");
+      const inputFolder = await fs.promises.readdir("/tmp/input");
+      const customDirectory = await fs.promises.readdir("/tmp/output");
       if (inputFolder.length === 0) {
         console.log("No MP3 found. Was the download successful?");
         attempts++;
@@ -146,14 +147,28 @@ async function processWithSpleeter() {
   try {
     console.log("Running Spleeter Python Script...");
     updateProcessingStatus(true);
-    const { stdout, stderr } = await exec(
-      `python ${path.join("/spleeter/main.py")}`
-    );
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
+
+    const rootPath = process.cwd();
+    const pythonProcess = spawn("python", [
+      path.join(rootPath, "main.py"),
+      "/tmp/input",
+      "/tmp/output",
+    ]);
+
+    pythonProcess.stdout.on("data", (data) => {
+      console.log(`stdout: ${data}`);
+    });
+
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on("close", (code) => {
+      console.log(`child process exited with code ${code}`);
+      updateProcessingStatus(false);
+    });
   } catch (error) {
     console.error(`exec error: ${error}`);
-  } finally {
     updateProcessingStatus(false);
   }
 }

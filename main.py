@@ -1,11 +1,9 @@
 import os
+import argparse
 from spleeter.separator import Separator
 from pydub import AudioSegment
 
-def main():
-    audio_file = './public/spleeter/input/custom.mp3'
-    output_path = './public/'
-
+def main(audio_file, output_path):
     # Check if the output folder exists, otherwise create it
     os.makedirs(output_path, exist_ok=True)
 
@@ -26,4 +24,9 @@ def main():
     print("Spleeter script finished running.")  # Print message upon completion
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Process audio file with Spleeter.')
+    parser.add_argument('audio_file', type=str, help='Path to the input audio file')
+    parser.add_argument('output_path', type=str, help='Path to the output directory')
+    args = parser.parse_args()
+    
+    main(args.audio_file, args.output_path)
