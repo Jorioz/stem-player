@@ -56,46 +56,39 @@ export default function Home() {
   };
 
   const handleTrackSelect = (id: string) => {
+    if (id === "00") {
+      setSelectedTrack(null);
+      console.log("Resetting");
+      setTimeout(() => {
+        setSelectedTrack("custom");
+      }, 1); // very short delay to ensure reset happens
+      return;
+    }
     switch (id) {
       case "01":
-        if (selectedTrack === "jid") {
-        } else {
-          randomColor();
-          setSelectedTrack("jid");
-          console.log("Library: Selected JID");
-        }
+        randomColor();
+        setSelectedTrack("jid");
+        console.log("Library: Selected JID");
         break;
       case "02":
-        if (selectedTrack === "coldplay") {
-        } else {
-          randomColor();
-          setSelectedTrack("coldplay");
-          console.log("Library: Selected Coldplay");
-        }
+        randomColor();
+        setSelectedTrack("coldplay");
+        console.log("Library: Selected Coldplay");
         break;
       case "03":
-        if (selectedTrack === "silksonic") {
-        } else {
-          randomColor();
-          setSelectedTrack("silksonic");
-          console.log("Library: Selected Silk Sonic");
-        }
+        randomColor();
+        setSelectedTrack("silksonic");
+        console.log("Library: Selected Silk Sonic");
         break;
       case "04":
-        if (selectedTrack === "kda") {
-        } else {
-          randomColor();
-          setSelectedTrack("kda");
-          console.log("Library: Selected K/DA");
-        }
+        randomColor();
+        setSelectedTrack("kda");
+        console.log("Library: Selected K/DA");
         break;
       case "05":
-        if (selectedTrack === "throttle") {
-        } else {
-          randomColor();
-          setSelectedTrack("throttle");
-          console.log("Library: Selected Throttle");
-        }
+        randomColor();
+        setSelectedTrack("throttle");
+        console.log("Library: Selected Throttle");
         break;
     }
   };
@@ -446,16 +439,39 @@ export default function Home() {
     }
   };
 
-  // API Call
+  // API Calls
+
   const [inputValue, setInputValue] = useState("");
+  const [isCustomTrack, setIsCustomTrack] = useState(false);
+  const [title, setTitle] = useState("");
+  const [uploader, setUploader] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await fetch("/api/process-youtube", {
-      method: "POST",
-      body: JSON.stringify({ link: inputValue }),
-    });
-    const data = await response.json();
-    console.log(data);
+    setIsLoaderVisible(true);
+    try {
+      // POST: send youtube link for processing
+      const response = await fetch("/api/process-youtube", {
+        method: "POST",
+        body: JSON.stringify({ link: inputValue }),
+      });
+      const data = await response.json();
+      console.log(data);
+      setTitle(data.title);
+      setUploader(data.uploader);
+      setThumbnail(data.thumbnail);
+
+      // GET: check if processing is done
+      const checkReponse = await fetch("/api/process-youtube", {
+        method: "GET",
+      });
+      const checkData = await checkReponse.json();
+      setIsCustomTrack(true);
+    } catch (error) {
+      console.error("An error occurred:", error);
+    } finally {
+      setIsLoaderVisible(false);
+    }
   };
 
   return (
@@ -510,6 +526,11 @@ export default function Home() {
                   placeholder="Enter a YouTube URL"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Backspace") {
+                      setInputValue("");
+                    }
+                  }}
                 ></input>
                 <button className="aspect-square bg-stone-300 rounded-r-full flex items-center justify-center p-5 border-l-2 border-stone-400 hover:bg-stone-400 transition-all duration-150">
                   <IoSend color={"gray"} size={24} />
@@ -528,6 +549,19 @@ export default function Home() {
                 className="w-full flex flex-col overflow-x-hidden"
                 id="scrollbar1"
               >
+                {isCustomTrack && (
+                  <Tracks
+                    title={title}
+                    artist={uploader}
+                    tags="Custom Song"
+                    tagColor="bg-gray-300"
+                    id="00"
+                    src={thumbnail}
+                    setIsTrackSelected={handleTrackSelect}
+                    toggleLoading={toggleLoading}
+                  />
+                )}
+
                 <Tracks
                   title="Raydar"
                   artist="JID"

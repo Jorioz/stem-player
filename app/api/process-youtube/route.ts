@@ -44,12 +44,15 @@ export async function POST(req: Request) {
       );
     } else {
       // Start download video to specified path, with filename custom.mp3
-      await downloadVideo(link);
+      const info = await downloadVideo(link);
       // call spleeter process:
       await processWithSpleeter();
       return new Response(
         JSON.stringify({
           message: "Video downloaded successfully",
+          title: info.videoDetails.title,
+          uploader: info.videoDetails.author.name,
+          thumbnail: info.videoDetails.thumbnails[0].url,
         }),
         {
           status: 200,
@@ -85,6 +88,7 @@ async function downloadVideo(link: string) {
   await ytdl
     .downloadFromInfo(info, { format: audioFormat })
     .pipe(fs.createWriteStream(filePath));
+  return info;
 }
 
 async function processWithSpleeter() {

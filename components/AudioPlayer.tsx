@@ -52,9 +52,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     };
   }, []);
 
-  // Reset if selected track is changed
+  // Reset if selected track is changed or null
   useEffect(() => {
-    if (selectedTrack !== prevSelectedTrack.current) {
+    if (selectedTrack === null || selectedTrack !== prevSelectedTrack.current) {
       setIsLoaded(false);
       setIsPlaying(false);
       setIsPathValid(false);
@@ -66,9 +66,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       bassRef.current = null;
       drumsRef.current?.unload();
       drumsRef.current = null;
-      //console.log("Reset");
-      prevSelectedTrack.current = selectedTrack;
-      //console.log("AudioPlayer using id:", selectedTrack);
+      console.log("Reset");
     }
   }, [selectedTrack]);
 

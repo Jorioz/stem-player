@@ -34,12 +34,15 @@ function Tracks({
   };
 
   return (
-    <button className="text-left" onClick={handleClick}>
-      <div className={`w-full flex h-28 md:h-32 p-2 my-2 hover:bg-stone-200 `}>
-        <img className="w-auto h-full shadow-md mr-2 rounded-md" src={src} />
+    <button className="text-left" onClick={handleClick} id="scrollbar1">
+      <div className={`w-full flex h-28 md:h-32 p-2 my-2  hover:bg-stone-200`}>
+        <img
+          className="w-auto h-full shadow-md mr-2 rounded-md aspect-square object-cover"
+          src={src}
+        />
         <div className="flex flex-col justify-center flex-1">
-          <div className="mx-1 font-bold">{title}</div>
-          <div className="mx-1">{artist}</div>
+          <div className="mx-1 font-bold truncate">{title}</div>
+          <div className="mx-1 truncate">{artist}</div>
           <div
             className={`mx-1 mt-1 rounded-full flex justify-center px-5 items-center text-center text-sm w-fit ${tagColor}`}
           >
