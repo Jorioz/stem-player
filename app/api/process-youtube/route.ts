@@ -20,13 +20,9 @@ export async function GET(req: Request, res: Response) {
     });
   }
 }
-export function updateProcessingStatus(value: boolean) {
+async function updateProcessingStatus(value: boolean) {
   isProcessing = value;
   console.log("Processing status updated to: ", isProcessing);
-}
-
-export function getProcessingStatus() {
-  return isProcessing;
 }
 
 export async function POST(req: Request) {
