@@ -150,7 +150,7 @@ async function processWithSpleeter() {
 
     const rootPath = process.cwd();
     const pythonProcess = spawn("python", [
-      path.join(rootPath, "main.py"),
+      path.join(rootPath, "./main.py"),
       "/tmp/input",
       "/tmp/output",
     ]);
