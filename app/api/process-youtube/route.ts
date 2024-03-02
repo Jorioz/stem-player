@@ -2,7 +2,8 @@ import ytdl from "ytdl-core";
 import fs from "fs";
 import path from "path";
 import util from "util";
-import { exec } from "child_process";
+const exec = util.promisify(require("child_process").exec);
+import { updateProcessingStatus } from "../check-status/route";
 
 const readdir = util.promisify(fs.readdir);
 
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
       // Start download video to specified path, with filename custom.mp3
       await downloadVideo(link);
       // call spleeter process:
-      processWithSpleeter();
+      await processWithSpleeter();
       return new Response(
         JSON.stringify({
           message: "Video downloaded successfully",
@@ -70,7 +71,6 @@ async function downloadVideo(link: string) {
 
 async function processWithSpleeter() {
   console.log("Starting Spleeter Process:");
-
   let attempts = 0;
   while (attempts < 3) {
     try {
@@ -104,7 +104,15 @@ async function processWithSpleeter() {
     return;
   }
 
-  console.log("Running Spleeter Python Script...");
-  // Begin Spleeter Python Script:
-  exec(`python ./public/spleeter/main.py`);
+  try {
+    console.log("Running Spleeter Python Script...");
+    updateProcessingStatus(true);
+    const { stdout, stderr } = await exec(`python ./public/spleeter/main.py`);
+    console.log(`stdout: ${stdout}`);
+    console.error(`stderr: ${stderr}`);
+  } catch (error) {
+    console.error(`exec error: ${error}`);
+  } finally {
+    updateProcessingStatus(false);
+  }
 }
