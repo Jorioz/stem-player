@@ -20,6 +20,7 @@ export async function GET(req: Request, res: Response) {
     });
   }
 }
+
 async function updateProcessingStatus(value: boolean) {
   isProcessing = value;
   console.log("Processing status updated to: ", isProcessing);
@@ -77,19 +78,34 @@ async function downloadVideo(link: string) {
   const audioFormat = ytdl.chooseFormat(info.formats, {
     quality: "highestaudio",
   });
-  // path where yt video downloads to:
-  const filePath = path.join(process.cwd(), "spleeter", "custom", "custom.mp3");
-  // Delete old wav/mp3 contents if any:
-  const customDir = path.join(process.cwd(), "spleeter", "custom");
 
-  fs.readdirSync(customDir).forEach((file) => {
-    const fileToRemove = path.join(customDir, file);
-    fs.unlinkSync(fileToRemove);
-  });
-  //download audio:
+  // Path where yt video downloads to:
+  const filePath = path.join(process.cwd(), `tmp/input/custom.mp3`);
+  // Path to the custom output directory:
+  const customDir = path.join(process.cwd(), `tmp/output`);
+
+  // Create the custom output directory if it doesn't exist
+  if (!fs.existsSync(customDir)) {
+    fs.mkdirSync(customDir, { recursive: true });
+  } else {
+    // If the directory exists, remove its contents
+    fs.readdirSync(customDir).forEach((file) => {
+      const fileToRemove = path.join(customDir, file);
+      fs.unlinkSync(fileToRemove);
+    });
+  }
+
+  // Create the input directory if it doesn't exist
+  const inputDir = path.join(process.cwd(), `tmp/input`);
+  if (!fs.existsSync(inputDir)) {
+    fs.mkdirSync(inputDir, { recursive: true });
+  }
+
+  // Download audio:
   await ytdl
     .downloadFromInfo(info, { format: audioFormat })
     .pipe(fs.createWriteStream(filePath));
+
   return info;
 }
 
@@ -98,9 +114,9 @@ async function processWithSpleeter() {
   let attempts = 0;
   while (attempts < 3) {
     try {
-      const inputFolder = await readdir(path.join(process.cwd(), "spleeter"));
+      const inputFolder = await readdir(path.join(process.cwd(), `tmp/input`));
       const customDirectory = await readdir(
-        path.join(process.cwd(), "spleeter", "custom")
+        path.join(process.cwd(), `tmp/output`)
       );
       if (inputFolder.length === 0) {
         console.log("No MP3 found. Was the download successful?");
@@ -111,13 +127,9 @@ async function processWithSpleeter() {
       }
 
       if (customDirectory.length > 0) {
-        console.log("Custom directory was not emptied, clearing now...");
+        console.log("Output directory was not emptied, clearing now...");
         customDirectory.forEach((file) => {
-          const fileToRemove = path.join(
-            __dirname,
-            "../../spleeter/custom",
-            file
-          );
+          const fileToRemove = path.join(process.cwd(), `tmp/output`, file);
           fs.unlinkSync(fileToRemove);
         });
       } else {
@@ -137,7 +149,7 @@ async function processWithSpleeter() {
     console.log("Running Spleeter Python Script...");
     updateProcessingStatus(true);
     const { stdout, stderr } = await exec(
-      `python ${path.join(process.cwd(), "spleeter", "main.py")}`
+      `python ${path.join(process.cwd(), `spleeter/main.py`)}`
     );
     console.log(`stdout: ${stdout}`);
     console.error(`stderr: ${stderr}`);
